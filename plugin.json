@@ -1,0 +1,48 @@
+{
+  "name": "siyuan-plugin-mark-hide",
+  "author": "Achuan-2",
+  "url": "https://github.com/Achuan-2/siyuan-plugin-mark-hide",
+  "version": "0.0.1",
+  "minAppVersion": "3.0.12",
+  "backends": [
+    "windows",
+    "linux",
+    "darwin",
+    "docker",
+    "ios",
+    "android"
+  ],
+  "frontends": [
+    "desktop",
+    "mobile",
+    "browser-desktop",
+    "browser-mobile",
+    "desktop-window"
+  ],
+  "displayName": {
+    "en_US": "Mark Hide",
+    "zh_CN": "高亮挖空"
+  },
+  "description": {
+    "en_US": "Click the top bar button to hide/show the highlighted text",
+    "zh_CN": "点击顶栏按钮，隐藏/显示高亮文字"
+  },
+  "readme": {
+    "en_US": "README.md",
+    "zh_CN": "README_zh_CN.md"
+  },
+  "funding": {
+    "custom": [
+      "https://www.yuque.com/achuan-2"
+    ]
+  },
+  "keywords": [
+    "高亮",
+    "Mark",
+    "学习",
+    "记忆",
+    "Learning",
+    "Memory"
+
+  ]
+}
