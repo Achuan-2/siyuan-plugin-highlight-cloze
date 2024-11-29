@@ -4,6 +4,7 @@ import { SettingUtils } from "./libs/setting-utils";
 const STORAGE_NAME = "config";
 
 export default class MarkHide extends Plugin {
+    private isActive: boolean = false;
     private settingUtils: SettingUtils;
     private styleElement: HTMLStyleElement;
     private readonly HIDE_STYLES = `
@@ -24,6 +25,11 @@ export default class MarkHide extends Plugin {
     `;
     customTab: () => IModel;
 
+    updateCSS(css: string) {
+        if (this.isActive) {
+            this.styleElement.textContent = css;
+        }
+    }
 
     async onload() {
         // Create style element
@@ -32,7 +38,8 @@ export default class MarkHide extends Plugin {
         document.head.appendChild(this.styleElement);
 
         this.settingUtils = new SettingUtils({
-            plugin: this, name: STORAGE_NAME
+            plugin: this,
+            name: STORAGE_NAME,
         });
         this.settingUtils.addItem({
             key: "css",
@@ -40,6 +47,14 @@ export default class MarkHide extends Plugin {
             type: "textarea",
             title: this.i18n.settings.css.title,
             description: this.i18n.settings.css.description,
+            action: {
+                callback: () => {
+                    const newCSS = this.settingUtils.take('css');
+                    if (newCSS) {
+                        this.updateCSS(newCSS);
+                    }
+                }
+            }
         });
 
 
@@ -57,13 +72,14 @@ export default class MarkHide extends Plugin {
             callback:  async () => {
                 // Initialize settings
                 await this.settingUtils.load();
-                if (topBarElement.style.backgroundColor === 'transparent' || !topBarElement.style.backgroundColor) {
+                if (!this.isActive) {
                     topBarElement.style.backgroundColor = "var(--b3-toolbar-hover)";
-                    
+                    this.isActive = true;
                     this.styleElement.textContent = this.settingUtils.get('css');
                     topBarElement.setAttribute('aria-label', this.i18n.show);
                 } else {
                     topBarElement.style.backgroundColor = 'transparent';
+                    this.isActive = false;
                     this.styleElement.textContent = '';
                     topBarElement.setAttribute('aria-label', this.i18n.hide);
                 }
