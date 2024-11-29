@@ -13,8 +13,9 @@
 
 高亮挖空模式下，鼠标悬浮挖空文字可显示高亮文字。
 
-高亮挖空模式下，导出pdf能保持高亮挖空样式，可用于打印挖空的文档来复习。
-   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_15-44-11-2024-11-29.png)
+高亮挖空模式下，导出pdf能保持高亮挖空样式，这样就能打印挖空的文档来制作题目用于复习和测试。
+
+![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_15-44-11-2024-11-29.png)
 
 
 ## 🎨自定义css
