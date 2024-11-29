@@ -25,10 +25,13 @@ Custom highlight cloze styles are supported.
 
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_15-44-28-2024-11-29.png)
 
-For example, if you want the highlight cloze style to be a black underline, you can modify the CSS in the settings as follows:
+
+Example: 
+
+If you want the text with a hollow highlight style to have a black underline, you can modify the CSS in the settings as follows:
 
 ```css
-/* Highlight cloze style */
+/* Style for text with  cloze */
 .b3-typography mark,
 .b3-typography span[data-type~=mark],
 .protyle-wysiwyg mark,
@@ -38,7 +41,7 @@ For example, if you want the highlight cloze style to be a black underline, you 
     background: none !important;
     border-bottom: 2px solid var(--b3-theme-on-background) !important;
 }
-/* the display style when hovering highlight cloze */
+/* Style for text when hovering over cloze */
 .b3-typography mark:hover,
 .b3-typography span[data-type~=mark]:hover,
 .protyle-wysiwyg mark:hover,
@@ -47,6 +50,36 @@ For example, if you want the highlight cloze style to be a black underline, you 
     transition: color 0.5s ease-in-out;
 }
 ```
+
+If you want the exported PDF to have the hollow style with a black underline, while keeping the original highlight style in the Siyuan application, you can set the style specifically for `#preview .protyle-wysiwyg span[data-type~='mark']`
+
+```css
+/* Style for text with cloze*/
+.b3-typography mark,
+.b3-typography span[data-type~=mark],
+.protyle-wysiwyg mark,
+.protyle-wysiwyg span[data-type~='mark'] {
+    color: transparent !important;
+    transition: color 0.5s ease-in-out;
+}
+
+/* Style for text when hovering over cloze */
+.b3-typography mark:hover,
+.b3-typography span[data-type~=mark]:hover,
+.protyle-wysiwyg mark:hover,
+.protyle-wysiwyg span[data-type~='mark']:hover {
+    color: var(--b3-protyle-inline-mark-color) !important;
+    transition: color 0.5s ease-in-out;
+}
+
+/* Style for cloze in exported PDF */
+#preview .protyle-wysiwyg span[data-type~='mark'] {
+    color: transparent !important;
+    border-bottom: 2px solid var(--b3-theme-on-background);
+}
+```
+
+
 
 ## ❤️Powered by Love
 

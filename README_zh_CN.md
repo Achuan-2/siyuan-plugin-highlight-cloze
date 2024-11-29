@@ -62,10 +62,7 @@
     color: transparent !important;
     transition: color 0.5s ease-in-out;
 }
-#preview .protyle-wysiwyg span[data-type~='mark'] {
-    color: transparent !important;
-    border-bottom: 2px solid var(--b3-theme-on-background);
-}
+
 /* 悬浮高亮挖空显示文字的样式 */
 .b3-typography mark:hover,
 .b3-typography span[data-type~=mark]:hover,
@@ -74,7 +71,12 @@
     color: var(--b3-protyle-inline-mark-color) !important;
     transition: color 0.5s ease-in-out;
 }
-  
+
+/* 导出pdf时高亮挖空的样式 */
+#preview .protyle-wysiwyg span[data-type~='mark'] {
+    color: transparent !important;
+    border-bottom: 2px solid var(--b3-theme-on-background);
+}
 ```
 
 
