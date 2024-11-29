@@ -8,7 +8,7 @@
 
 ## ✨功能
 
-支持点击顶部按钮隐藏/显示高亮文字
+点击顶部的插件按钮，即可隐藏/显示高亮文字
 
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/高亮挖空-2024-11-29.gif)
 
