@@ -1,8 +1,8 @@
 {
-  "name": "siyuan-plugin-mark-hide",
+  "name": "siyuan-plugin-highlight-cloze",
   "author": "Achuan-2",
-  "url": "https://github.com/Achuan-2/siyuan-plugin-mark-hide",
-  "version": "0.0.3",
+  "url": "https://github.com/Achuan-2/siyuan-plugin-highlight-cloze",
+  "version": "0.0.4",
   "minAppVersion": "3.0.12",
   "backends": [
     "windows",
@@ -39,6 +39,7 @@
   "keywords": [
     "高亮",
     "Mark",
+    "Highlight",
     "学习",
     "记忆",
     "Learning",

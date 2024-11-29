@@ -1,10 +1,10 @@
 {
-    "show": "Mark Show",
-    "hide": "Mark Hide",
+    "show": "Highlight Show",
+    "hide": "Highlight Cloze",
     "settings": {
         "css": {
             "title": "Custom Style",
-            "description": "Customize the CSS style for mark hiding"
+            "description": "Customize the CSS style for Highlight Cloze"
         },
         "reset": {
             "title": "Reset Settings",
