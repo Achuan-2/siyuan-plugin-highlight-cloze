@@ -8,8 +8,10 @@ While learning, we often encounter fill-in-the-blank questions and key points th
 
 * ✨Click the plugin button at the top to toggle the visibility of highlighted text.
 
-  ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/高亮挖空-2024-11-29.gif)
+  ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/高亮挖空展示-2024-11-29.gif)
 * ✨In highlight cloze mode, hovering over the cloze text reveals the highlighted content.
+  
+  ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/高亮挖空悬浮显示-2024-11-29.gif)
 * ✨When exporting to PDF in highlight cloze mode, the style is preserved, allowing you to print the document for review and testing.
 
   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_16-54-30-2024-11-29.png)
