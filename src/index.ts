@@ -7,7 +7,7 @@ export default class MarkHide extends Plugin {
     private isActive: boolean = false;
     private settingUtils: SettingUtils;
     private styleElement: HTMLStyleElement;
-    private readonly HIDE_STYLES = `
+    private readonly HIDE_STYLES = `/* 高亮挖空的样式 */
 .b3-typography mark,
 .b3-typography span[data-type~=mark],
 .protyle-wysiwyg mark,
@@ -15,6 +15,7 @@ export default class MarkHide extends Plugin {
     color: transparent !important;
     transition: color 0.5s ease-in-out;
 }
+/* 悬浮高亮挖空显示文字的样式 */
 .b3-typography mark:hover,
 .b3-typography span[data-type~=mark]:hover,
 .protyle-wysiwyg mark:hover,
@@ -23,6 +24,12 @@ export default class MarkHide extends Plugin {
     transition: color 0.5s ease-in-out;
 }
     `;
+    private getDefaultSettings() {
+        return {
+            css: this.HIDE_STYLES,
+        };
+    }
+
     customTab: () => IModel;
 
     updateCSS(css: string) {
@@ -53,6 +60,30 @@ export default class MarkHide extends Plugin {
                     if (newCSS) {
                         this.updateCSS(newCSS);
                     }
+                }
+            }
+        });
+
+        // Reset Settings Button
+        this.settingUtils.addItem({
+            key: "resetConfig",
+            value: "",
+            type: "button",
+            title: this.i18n.settings.reset?.title || "Reset Settings",
+            description: this.i18n.settings.reset?.description || "Reset all settings to default values",
+            button: {
+                label: this.i18n.settings.reset?.label || "Reset",
+                callback: async () => {
+                    // if (confirm(this.i18n.settings.reset.confirm)) {
+                    const defaultSettings = this.getDefaultSettings();
+                    // Update each setting item's value and UI element  只是UI改了，json的值没有改，所以不点击保存可以反悔
+                    for (const [key, value] of Object.entries(defaultSettings)) {
+                        await this.settingUtils.set(key, '');
+                        // 等0.2秒，有一个刷新效果
+                        await new Promise((resolve) => setTimeout(resolve, 200));
+                        await this.settingUtils.set(key, value);
+                    }
+
                 }
             }
         });

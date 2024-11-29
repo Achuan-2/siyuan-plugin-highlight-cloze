@@ -4,7 +4,12 @@
     "settings": {
         "css": {
             "title": "自定义样式",
-            "description": "自定义高亮隐藏的CSS样式"
+            "description": "自定义高亮隐藏的CSS样式，样式最好添加!important，避免样式没有生效"
+        },
+        "reset": {
+            "title": "重置设置",
+            "description": "将所有设置恢复为默认值",
+            "label": "重置"
         }
     }
 }

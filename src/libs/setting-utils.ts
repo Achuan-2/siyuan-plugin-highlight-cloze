@@ -343,7 +343,9 @@ export class SettingUtils {
                 let textareaElement: HTMLTextAreaElement = document.createElement('textarea');
                 textareaElement.className = "b3-text-field fn__block";
                 textareaElement.value = item.value;
-                textareaElement.rows = 15;
+                textareaElement.rows = 20;
+                // 取消文字拼写检查
+                textareaElement.spellcheck = false;
                 textareaElement.onchange = item.action?.callback ?? (() => { });
                 itemElement = textareaElement;
                 break;
