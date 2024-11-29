@@ -1,8 +1,8 @@
 
 ## v0.0.3 / 2024.11.29
 - ✨支持开启高亮挖空模式时，悬浮挖空文字显示高亮文字
-- ✨ 修改高亮挖空实现机制，现在设置高亮挖空模式时，导出pdf也能高亮挖空啦，这样方便打印复习。
-   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_15-44-11-2024-11-29.png)
+- ✨ 高亮挖空模式下，导出pdf能保持高亮挖空样式，这样就能打印挖空的文档来制作题目用于复习和测试。
+   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_16-54-30-2024-11-29.png)
 - ✨设置里可以修改高亮挖空的css啦，还添加了重置默认设置按钮
    ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_15-44-28-2024-11-29.png)
 
