@@ -8,9 +8,45 @@
 
 ## ✨功能
 
-点击顶部的插件按钮，即可隐藏/显示高亮文字
-
+点击顶部的插件按钮，即可隐藏/显示高亮文字。
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/高亮挖空-2024-11-29.gif)
+
+高亮挖空模式下，鼠标悬浮挖空文字可显示高亮文字。
+
+高亮挖空模式下，导出pdf能保持高亮挖空样式，可用于打印挖空的文档来复习。
+   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_15-44-11-2024-11-29.png)
+
+
+## 🎨自定义css
+
+支持自定义高亮挖空的样式
+
+![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_15-44-28-2024-11-29.png)
+
+比如如果你想要高亮挖空的样式是黑色下划线，可以把设置里的css改为下面的内容
+
+```css
+/* 高亮挖空的样式 */
+.b3-typography mark,
+.b3-typography span[data-type~=mark],
+.protyle-wysiwyg mark,
+.protyle-wysiwyg span[data-type~='mark'] {
+    color: transparent !important;
+    transition: color 0.5s ease-in-out;
+    background: none !important;
+    border-bottom: 2px solid var(--b3-theme-on-background) !important;
+}
+/* 悬浮高亮挖空显示文字的样式 */
+.b3-typography mark:hover,
+.b3-typography span[data-type~=mark]:hover,
+.protyle-wysiwyg mark:hover,
+.protyle-wysiwyg span[data-type~='mark']:hover {
+    color: var(--b3-protyle-inline-mark-color) !important;
+    transition: color 0.5s ease-in-out;
+}
+```
+
+
 
 ## ❤️用爱发电
 
