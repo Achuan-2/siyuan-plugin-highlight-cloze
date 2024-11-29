@@ -7,6 +7,7 @@ export default class MarkHide extends Plugin {
     private isActive: boolean = false;
     private settingUtils: SettingUtils;
     private styleElement: HTMLStyleElement;
+    private topBarElement;
     private readonly HIDE_STYLES = `/* 高亮挖空的样式 */
 .b3-typography mark,
 .b3-typography span[data-type~=mark],
@@ -37,6 +38,7 @@ export default class MarkHide extends Plugin {
             this.styleElement.textContent = css;
         }
     }
+
 
     async onload() {
         // Create style element
@@ -96,26 +98,33 @@ export default class MarkHide extends Plugin {
 </symbol>`);
 
         // Modify top bar callback
-        const topBarElement = this.addTopBar({
+        this.topBarElement = this.addTopBar({
             icon: "iconMarkHide",
             title: this.i18n.hide,
             position: "right",
-            callback:  async () => {
-                // Initialize settings
-                await this.settingUtils.load();
-                if (!this.isActive) {
-                    topBarElement.style.backgroundColor = "var(--b3-toolbar-hover)";
-                    this.isActive = true;
-                    this.styleElement.textContent = this.settingUtils.get('css');
-                    topBarElement.setAttribute('aria-label', this.i18n.show);
-                } else {
-                    topBarElement.style.backgroundColor = 'transparent';
-                    this.isActive = false;
-                    this.styleElement.textContent = '';
-                    topBarElement.setAttribute('aria-label', this.i18n.hide);
-                }
-            }
+            callback: () => this.toggleCloze()
         });
+
+        // 注册快捷键
+        this.addCommand({
+            langKey: this.i18n.toggle,
+            hotkey: "",
+            callback: () => this.toggleCloze(),
+        });
+    }
+    async toggleCloze() {
+        await this.settingUtils.load();
+        if (!this.isActive) {
+            this.topBarElement.style.backgroundColor = "var(--b3-toolbar-hover)";
+            this.isActive = true;
+            this.styleElement.textContent = this.settingUtils.get('css');
+            this.topBarElement.setAttribute('aria-label', this.i18n.show);
+        } else {
+            this.topBarElement.style.backgroundColor = 'transparent';
+            this.isActive = false;
+            this.styleElement.textContent = '';
+            this.topBarElement.setAttribute('aria-label', this.i18n.hide);
+        }
     }
 
     onunload() {

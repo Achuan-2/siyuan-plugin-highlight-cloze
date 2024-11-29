@@ -1,4 +1,8 @@
 
+## v0.0.5 / 2024.11.29
+- ✨支持设置快捷键，默认为空
+   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_21-08-49-2024-11-29.png)
+
 ## v0.0.4 / 2024.11.29
 
 - 📝英文名从Mark Hide改名为HighLight Cloze，并更改repo名称

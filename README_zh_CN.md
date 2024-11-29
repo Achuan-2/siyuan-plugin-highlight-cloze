@@ -8,14 +8,17 @@
 
 ## ✨功能
 
-点击顶部的插件按钮，即可隐藏/显示高亮文字。
+✨点击顶部的插件按钮，即可隐藏/显示高亮文字。
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/高亮挖空-2024-11-29.gif)
 
-高亮挖空模式下，鼠标悬浮挖空文字可显示高亮文字。
+✨高亮挖空模式下，鼠标悬浮挖空文字可显示高亮文字。
 
-高亮挖空模式下，导出pdf能保持高亮挖空样式，这样就能打印挖空的文档来制作题目用于复习和测试。
+✨高亮挖空模式下，导出pdf能保持高亮挖空样式，这样就能打印挖空的文档来制作题目用于复习和测试。
 
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_16-54-30-2024-11-29.png)
+
+✨支持设置快捷键，默认为空
+![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_21-08-49-2024-11-29.png)
 
 
 ## 🎨自定义css

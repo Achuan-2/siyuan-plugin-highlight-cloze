@@ -1,6 +1,7 @@
 {
     "show": "Highlight Show",
     "hide": "Highlight Cloze",
+    "toggle": "Highlight Cloze/Show",
     "settings": {
         "css": {
             "title": "Custom Style",
