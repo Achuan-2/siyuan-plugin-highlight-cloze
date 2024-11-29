@@ -1,5 +1,10 @@
 {
     "show": "高亮显示",
-    "hide": "高亮挖空"
-
+    "hide": "高亮挖空",
+    "settings": {
+        "css": {
+            "title": "自定义样式",
+            "description": "自定义高亮隐藏的CSS样式"
+        }
+    }
 }

@@ -343,6 +343,7 @@ export class SettingUtils {
                 let textareaElement: HTMLTextAreaElement = document.createElement('textarea');
                 textareaElement.className = "b3-text-field fn__block";
                 textareaElement.value = item.value;
+                textareaElement.rows = 15;
                 textareaElement.onchange = item.action?.callback ?? (() => { });
                 itemElement = textareaElement;
                 break;

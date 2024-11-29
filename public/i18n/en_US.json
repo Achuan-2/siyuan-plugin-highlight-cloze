@@ -1,4 +1,10 @@
 {
     "show": "Mark Show",
-    "hide": "Mark Hide"
+    "hide": "Mark Hide",
+    "settings": {
+        "css": {
+            "title": "Custom Style",
+            "description": "Customize the CSS style for mark hiding"
+        }
+    }
 }
