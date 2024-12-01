@@ -93,8 +93,8 @@ export default class MarkHide extends Plugin {
 
         // 添加icon
         this.addIcons(`<symbol id="iconMarkHide"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
-<path d="M134,100v34H26v-34h-12v46h132v-46h-12Z" style="fill: #212121;"/>
-<path d="M62,89h36l8,21h14L87,30h-14l-33,80h14s8-21,8-21ZM80,43l14,36h-28l14-36Z" style="fill: #212121;"/>
+<path d="M134,100v34H26v-34h-12v46h132v-46h-12Z" style="fill: var(--b3-theme-on-backgound);"/>
+<path d="M62,89h36l8,21h14L87,30h-14l-33,80h14s8-21,8-21ZM80,43l14,36h-28l14-36Z" style="fill: var(--b3-theme-on-backgound);"/>
 </symbol>`);
 
         // Modify top bar callback
@@ -107,7 +107,8 @@ export default class MarkHide extends Plugin {
 
         // 注册快捷键
         this.addCommand({
-            langKey: this.i18n.toggle,
+            langKey: this.i18n.toggle, // 用于区分不同快捷键的 key
+            langText: this.i18n.toggle, // 命令面板显示的文字
             hotkey: "",
             callback: () => this.toggleCloze(),
         });
