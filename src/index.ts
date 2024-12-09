@@ -132,4 +132,8 @@ export default class MarkHide extends Plugin {
         // Clean up style element when plugin is unloaded
         this.styleElement?.remove();
     }
+    uninstall() {
+        // Clean up style element when plugin is uninstall
+        this.styleElement?.remove();
+    }
 }
