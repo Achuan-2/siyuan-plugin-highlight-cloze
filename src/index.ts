@@ -47,6 +47,7 @@ export default class MarkHide extends Plugin {
     transform-style: preserve-3d;
     transition: transform 0.6s ease-in-out, background-color 0.6s ease-in-out, border-color 0.6s ease-in-out, background-image 0.6s ease-in-out;
     cursor: pointer;
+    position: relative;
 }
 
 .protyle-wysiwyg [data-node-id][custom-hide="true"] *{
@@ -59,6 +60,7 @@ export default class MarkHide extends Plugin {
     background-color: transparent;
     background-image: none;
     border-color: var(--b3-theme-on-background);
+    cursor: default;
 }
 
 .protyle-wysiwyg [data-node-id][custom-hide="true"].cloze-revealed * {
@@ -74,6 +76,38 @@ export default class MarkHide extends Plugin {
 
 .protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"].cloze-revealed * {
     opacity: 1;
+}
+
+/* 隐藏按钮样式 */
+.cloze-hide-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background-color: var(--b3-theme-error);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.cloze-hide-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.cloze-hide-btn::before {
+    content: "×";
+    font-weight: bold;
 }
     `;
 
@@ -143,6 +177,7 @@ export default class MarkHide extends Plugin {
     transform-style: preserve-3d;
     transition: transform 0.6s ease-in-out, background-color 0.6s ease-in-out, border-color 0.6s ease-in-out, background-image 0.6s ease-in-out;
     cursor: pointer;
+    position: relative;
 }
 
 .protyle-wysiwyg [data-node-id][custom-hide="true"] *{
@@ -155,6 +190,7 @@ export default class MarkHide extends Plugin {
     background-color: transparent;
     background-image: none;
     border-color: var(--b3-theme-on-background);
+    cursor: default;
 }
 
 .protyle-wysiwyg [data-node-id][custom-hide="true"].cloze-revealed * {
@@ -170,6 +206,38 @@ export default class MarkHide extends Plugin {
 
 .protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"].cloze-revealed * {
     opacity: 1;
+}
+
+/* 隐藏按钮样式 */
+.cloze-hide-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background-color: var(--b3-theme-error);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.cloze-hide-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.cloze-hide-btn::before {
+    content: "×";
+    font-weight: bold;
 }
         `;
     }
@@ -268,19 +336,45 @@ export default class MarkHide extends Plugin {
 
     private handleClozeClick(event: Event) {
         const target = event.target as HTMLElement;
+        
+        // 如果点击的是隐藏按钮，不处理
+        if (target.classList.contains('cloze-hide-btn')) {
+            return;
+        }
+        
         const clozeBlock = target.closest('[data-node-id][custom-hide="true"]') as HTMLElement;
 
         if (clozeBlock && this.isActive) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            // 切换显示状态
-            if (clozeBlock.classList.contains('cloze-revealed')) {
-                clozeBlock.classList.remove('cloze-revealed');
-            } else {
+            // 只处理显示，不处理隐藏
+            if (!clozeBlock.classList.contains('cloze-revealed')) {
+                event.preventDefault();
+                event.stopPropagation();
+                
                 clozeBlock.classList.add('cloze-revealed');
+                this.addHideButton(clozeBlock);
             }
         }
+    }
+
+    private addHideButton(clozeBlock: HTMLElement) {
+        // 避免重复添加按钮
+        if (clozeBlock.querySelector('.cloze-hide-btn')) {
+            return;
+        }
+        
+        const hideBtn = document.createElement('button');
+        hideBtn.className = 'cloze-hide-btn';
+        hideBtn.title = '隐藏挖空';
+        
+        hideBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            clozeBlock.classList.remove('cloze-revealed');
+            hideBtn.remove();
+        });
+        
+        clozeBlock.appendChild(hideBtn);
     }
 
     private async blockIconEventHandler({ detail }) {
