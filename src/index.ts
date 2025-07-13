@@ -3,7 +3,7 @@ import { setBlockAttrs, getBlockAttrs } from './api'
 import { SettingUtils } from "./libs/setting-utils";
 
 const STORAGE_NAME = "config";
-
+const STATE_FILE = "cloze-state.json";
 export default class MarkHide extends Plugin {
     private isActive: boolean = false;
     private settingUtils: SettingUtils;
@@ -243,7 +243,7 @@ export default class MarkHide extends Plugin {
     }
 
 
-    async onload() {
+    async onLayoutReady() {
         // Create style element
         this.styleElement = document.createElement('style');
         this.styleElement.id = 'snippetCSS-Markhide';
@@ -256,6 +256,7 @@ export default class MarkHide extends Plugin {
         // 默认显示虚线描边样式
         this.blockStyleElement.textContent = this.BLOCK_BORDER_ONLY_STYLES;
 
+        // 初始化设置
         this.settingUtils = new SettingUtils({
             plugin: this,
             name: STORAGE_NAME,
@@ -315,6 +316,9 @@ export default class MarkHide extends Plugin {
             callback: () => this.toggleCloze()
         });
 
+        // 加载保存的状态
+        await this.loadClozeState();
+
         // 注册快捷键
         this.addCommand({
             langKey: this.i18n.toggle, // 用于区分不同快捷键的 key
@@ -329,7 +333,43 @@ export default class MarkHide extends Plugin {
         // 添加点击事件监听器
         this.addClickListener();
     }
+    private async loadClozeState() {
+        try {
+            const stateData = await this.loadData(STATE_FILE);
+            if (stateData && stateData.isActive !== undefined) {
+                this.isActive = stateData.isActive;
 
+                // 根据加载的状态初始化UI和样式
+                if (this.isActive) {
+                    // 确保settingUtils已加载
+                    await this.settingUtils.load();
+                    this.topBarElement.style.backgroundColor = "var(--b3-toolbar-hover)";
+                    this.styleElement.textContent = this.settingUtils.get('css') || this.HIDE_STYLES;
+                    this.topBarElement.setAttribute('aria-label', this.i18n.show);
+                } else {
+                    this.topBarElement.style.backgroundColor = 'transparent';
+                    this.styleElement.textContent = '';
+                    this.topBarElement.setAttribute('aria-label', this.i18n.hide);
+                }
+
+                // 更新块样式
+                this.updateBlockStyles();
+            }
+        } catch (error) {
+            console.log('Failed to load cloze state:', error);
+            // 如果加载失败，使用默认状态（false）
+            this.isActive = false;
+        }
+    }
+    private async saveClozeState() {
+        try {
+            await this.saveData(STATE_FILE, {
+                isActive: this.isActive
+            });
+        } catch (error) {
+            console.error('Failed to save cloze state:', error);
+        }
+    }
     private addClickListener() {
         document.addEventListener('click', this.handleClozeClick.bind(this));
     }
@@ -437,7 +477,6 @@ export default class MarkHide extends Plugin {
         }
     }
 
-
     async toggleCloze() {
         await this.settingUtils.load();
         if (!this.isActive) {
@@ -453,6 +492,9 @@ export default class MarkHide extends Plugin {
         }
         // 更新块样式
         this.updateBlockStyles();
+
+        // 保存当前状态
+        await this.saveClozeState();
     }
 
     onunload() {
