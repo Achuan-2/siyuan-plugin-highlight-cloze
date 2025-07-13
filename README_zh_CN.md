@@ -17,6 +17,14 @@
 * ✨高亮挖空模式下，导出pdf能保持高亮挖空样式，这样就能打印挖空的文档来制作题目用于复习和测试。
 
   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_16-54-30-2024-11-29.png)
+* ✨支持挖空块
+  交互：
+  
+  - 块菜单挖空块或取消挖空
+  - 点击顶部的插件按钮，切换挖空状态
+  - 块挖空之后，点击块可显示块内容，显示块内容后，点击右上角的❌可以再次隐藏块内容
+
+  ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2025-07-13_16-09-36-2025-07-13.png)
 * ✨支持设置快捷键，默认为空
 
   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_21-08-49-2024-11-29.png)
