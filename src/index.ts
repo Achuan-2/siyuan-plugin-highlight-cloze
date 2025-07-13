@@ -331,23 +331,7 @@ export default class MarkHide extends Plugin {
         }
     }
 
-    private async toggleBlockCloze(blockId: string) {
-        try {
-            // 获取当前块的属性
-            const attrs = await getBlockAttrs(blockId);
-            const isHidden = attrs?.['custom-hide'] === 'true';
 
-            if (isHidden) {
-                // 如果已经挖空，则取消挖空
-                await setBlockAttrs(blockId, { 'custom-hide': '' });
-            } else {
-                // 如果没有挖空，则添加挖空
-                await setBlockAttrs(blockId, { 'custom-hide': 'true' });
-            }
-        } catch (error) {
-            console.error('Toggle block cloze failed:', error);
-        }
-    }
     async toggleCloze() {
         await this.settingUtils.load();
         if (!this.isActive) {
