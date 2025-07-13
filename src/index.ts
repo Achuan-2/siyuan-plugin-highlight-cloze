@@ -30,7 +30,7 @@ export default class MarkHide extends Plugin {
 /* ------------------ 自定义属性 ----------------------- */
 
 .protyle-wysiwyg [data-node-id][custom-hide="true"]{
-    border: 2px dashed  rgba(92, 135, 138, 0.322);
+    border: 2px dashed  rgba(92, 135, 138, 0.322) !important;
     background-color: rgba(92, 135, 138, 0.222);
     background-image: -webkit-gradient(linear,
     0 0, 100% 100%,
@@ -43,49 +43,43 @@ export default class MarkHide extends Plugin {
     to(transparent));
     background-size: 10px 10px;
     border-radius: 0.5em;
-    transform: perspective(1000px);
+    transform: perspective(1000px) rotateX(180deg);
     transform-style: preserve-3d;
-    transform: rotateX(180deg); 
+    transition: transform 0.6s ease-in-out, background-color 0.6s ease-in-out, border-color 0.6s ease-in-out, background-image 0.6s ease-in-out;
+    cursor: pointer;
 }
 
 .protyle-wysiwyg [data-node-id][custom-hide="true"] *{
     opacity: 0;
+    transition: opacity 0.6s ease-in-out;
 }
 
-.protyle-wysiwyg [data-node-id][custom-hide="true"]:hover{
-    animation: rotateHide 0.7s ease forwards;
+.protyle-wysiwyg [data-node-id][custom-hide="true"].cloze-revealed{
+    transform: perspective(1000px) rotateX(0deg);
+    background-color: transparent;
+    background-image: none;
+    border-color: var(--b3-theme-on-background);
 }
 
-.protyle-wysiwyg [data-node-id][custom-hide="true"]:hover * {
+.protyle-wysiwyg [data-node-id][custom-hide="true"].cloze-revealed * {
     opacity: 1;
-    transition: opacity 0.7s ease;
 }
 
-.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"]:hover{
-    animation: rotateHide 0.7s ease forwards;
+.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"].cloze-revealed{
+    transform: perspective(1000px) rotateX(0deg);
+    background-color: transparent;
+    background-image: none;
+    border-color: var(--b3-theme-on-background);
 }
 
-.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"]:hover * {
+.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"].cloze-revealed * {
     opacity: 1;
-    transition: opacity 0.7s ease;
-}
-
-@keyframes rotateHide {
-    0% {
-    }
-    100% {
-        transform: rotateX(0deg); 
-        color: var(--b3-theme-on-background);
-        border-color: var(--b3-theme-on-background);
-        background-color: transparent;
-        background-image: none;
-    }
 }
     `;
 
     private readonly BLOCK_BORDER_ONLY_STYLES = `/* 块挖空只有虚线描边的样式 */
 .protyle-wysiwyg [data-node-id][custom-hide="true"]{
-    border: 2px dashed rgba(92, 135, 138, 0.7);
+    border: 2px dashed rgba(92, 135, 138, 0.7) !important;
     border-radius: 0.5em;
 }
     `;
@@ -145,43 +139,37 @@ export default class MarkHide extends Plugin {
     to(transparent));
     background-size: 10px 10px;
     border-radius: 0.5em;
-    transform: perspective(1000px);
+    transform: perspective(1000px) rotateX(180deg);
     transform-style: preserve-3d;
-    transform: rotateX(180deg); 
+    transition: transform 0.6s ease-in-out, background-color 0.6s ease-in-out, border-color 0.6s ease-in-out, background-image 0.6s ease-in-out;
+    cursor: pointer;
 }
 
 .protyle-wysiwyg [data-node-id][custom-hide="true"] *{
     opacity: 0;
+    transition: opacity 0.6s ease-in-out;
 }
 
-.protyle-wysiwyg [data-node-id][custom-hide="true"]:hover{
-    animation: rotateHide 0.7s ease forwards;
+.protyle-wysiwyg [data-node-id][custom-hide="true"].cloze-revealed{
+    transform: perspective(1000px) rotateX(0deg);
+    background-color: transparent;
+    background-image: none;
+    border-color: var(--b3-theme-on-background);
 }
 
-.protyle-wysiwyg [data-node-id][custom-hide="true"]:hover * {
+.protyle-wysiwyg [data-node-id][custom-hide="true"].cloze-revealed * {
     opacity: 1;
-    transition: opacity 0.7s ease;
 }
 
-.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"]:hover{
-    animation: rotateHide 0.7s ease forwards;
+.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"].cloze-revealed{
+    transform: perspective(1000px) rotateX(0deg);
+    background-color: transparent;
+    background-image: none;
+    border-color: var(--b3-theme-on-background);
 }
 
-.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"]:hover * {
+.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"].cloze-revealed * {
     opacity: 1;
-    transition: opacity 0.7s ease;
-}
-
-@keyframes rotateHide {
-    0% {
-    }
-    100% {
-        transform: rotateX(0deg); 
-        color: var(--b3-theme-on-background);
-        border-color: var(--b3-theme-on-background);
-        background-color: transparent;
-        background-image: none;
-    }
 }
         `;
     }
@@ -269,6 +257,30 @@ export default class MarkHide extends Plugin {
 
         // 添加块菜单
         this.eventBus.on("click-blockicon", this.blockIconEventHandler.bind(this));
+
+        // 添加点击事件监听器
+        this.addClickListener();
+    }
+
+    private addClickListener() {
+        document.addEventListener('click', this.handleClozeClick.bind(this));
+    }
+
+    private handleClozeClick(event: Event) {
+        const target = event.target as HTMLElement;
+        const clozeBlock = target.closest('[data-node-id][custom-hide="true"]') as HTMLElement;
+
+        if (clozeBlock && this.isActive) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // 切换显示状态
+            if (clozeBlock.classList.contains('cloze-revealed')) {
+                clozeBlock.classList.remove('cloze-revealed');
+            } else {
+                clozeBlock.classList.add('cloze-revealed');
+            }
+        }
     }
 
     private async blockIconEventHandler({ detail }) {
@@ -353,10 +365,15 @@ export default class MarkHide extends Plugin {
         // Clean up style elements when plugin is unloaded
         this.styleElement?.remove();
         this.blockStyleElement?.remove();
+        // 移除点击事件监听器
+        document.removeEventListener('click', this.handleClozeClick.bind(this));
     }
+
     uninstall() {
         // Clean up style elements when plugin is uninstall
         this.styleElement?.remove();
         this.blockStyleElement?.remove();
+        // 移除点击事件监听器
+        document.removeEventListener('click', this.handleClozeClick.bind(this));
     }
 }
