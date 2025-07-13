@@ -2,6 +2,8 @@
     "show": "高亮显示",
     "hide": "高亮挖空",
     "toggle": "高亮挖空/显示",
+    "blockCloze": "块挖空",
+    "blockShow": "取消块挖空",
     "settings": {
         "css": {
             "title": "自定义样式",

@@ -2,6 +2,8 @@
     "show": "Highlight Show",
     "hide": "Highlight Cloze",
     "toggle": "Highlight Cloze/Show",
+    "blockCloze": "Block Cloze",
+    "blockShow": "Cancel Block Cloze",
     "settings": {
         "css": {
             "title": "Custom Style",

@@ -1,4 +1,5 @@
 import { Plugin, IModel } from "siyuan";
+import { setBlockAttrs, getBlockAttrs } from './api'
 import { SettingUtils } from "./libs/setting-utils";
 
 const STORAGE_NAME = "config";
@@ -7,6 +8,7 @@ export default class MarkHide extends Plugin {
     private isActive: boolean = false;
     private settingUtils: SettingUtils;
     private styleElement: HTMLStyleElement;
+    private blockStyleElement: HTMLStyleElement;
     private topBarElement;
     private readonly HIDE_STYLES = `/* 高亮挖空的样式 */
 .b3-typography mark,
@@ -24,6 +26,68 @@ export default class MarkHide extends Plugin {
     color: var(--b3-protyle-inline-mark-color) !important;
     transition: color 0.5s ease-in-out;
 }
+
+/* ------------------ 自定义属性 ----------------------- */
+
+.protyle-wysiwyg [data-node-id][custom-hide="true"]{
+    border: 2px dashed  rgba(92, 135, 138, 0.322);
+    background-color: rgba(92, 135, 138, 0.222);
+    background-image: -webkit-gradient(linear,
+    0 0, 100% 100%,
+    color-stop(.25, rgba(255, 255, 255, .2)),
+    color-stop(.25, transparent),
+    color-stop(.5, transparent),
+    color-stop(.5, rgba(255, 255, 255, .2)),
+    color-stop(.75, rgba(255, 255, 255, .2)),
+    color-stop(.75, transparent),
+    to(transparent));
+    background-size: 10px 10px;
+    border-radius: 0.5em;
+    transform: perspective(1000px);
+    transform-style: preserve-3d;
+    transform: rotateX(180deg); 
+}
+
+.protyle-wysiwyg [data-node-id][custom-hide="true"] *{
+    opacity: 0;
+}
+
+.protyle-wysiwyg [data-node-id][custom-hide="true"]:hover{
+    animation: rotateHide 0.7s ease forwards;
+}
+
+.protyle-wysiwyg [data-node-id][custom-hide="true"]:hover * {
+    opacity: 1;
+    transition: opacity 0.7s ease;
+}
+
+.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"]:hover{
+    animation: rotateHide 0.7s ease forwards;
+}
+
+.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"]:hover * {
+    opacity: 1;
+    transition: opacity 0.7s ease;
+}
+
+@keyframes rotateHide {
+    0% {
+    }
+    100% {
+        transform: rotateX(0deg); 
+        color: var(--b3-theme-on-background);
+        border-color: var(--b3-theme-on-background);
+        background-color: transparent;
+        background-image: none;
+    }
+}
+    `;
+
+    private readonly BLOCK_BORDER_ONLY_STYLES = `/* 块挖空只有虚线描边的样式 */
+.protyle-wysiwyg [data-node-id][custom-hide="true"]{
+    border: 2px dashed rgba(92, 135, 138, 0.7);
+    border-radius: 0.5em;
+}
     `;
     private getDefaultSettings() {
         return {
@@ -37,6 +101,89 @@ export default class MarkHide extends Plugin {
         if (this.isActive) {
             this.styleElement.textContent = css;
         }
+        this.updateBlockStyles();
+    }
+
+    private updateBlockStyles() {
+        if (this.isActive) {
+            // 如果激活状态，使用完整的块挖空样式（从CSS中提取块相关部分）
+            const blockStyles = this.extractBlockStyles(this.settingUtils.get('css') || this.HIDE_STYLES);
+            this.blockStyleElement.textContent = blockStyles;
+        } else {
+            // 如果未激活，只显示虚线描边
+            this.blockStyleElement.textContent = this.BLOCK_BORDER_ONLY_STYLES;
+        }
+    }
+
+    private extractBlockStyles(fullCSS: string): string {
+        // 提取块相关的样式
+        const lines = fullCSS.split('\n');
+        let inBlockSection = false;
+        let blockStyles = '';
+
+        for (const line of lines) {
+            if (line.includes('自定义属性') || line.includes('custom-hide')) {
+                inBlockSection = true;
+            }
+            if (inBlockSection) {
+                blockStyles += line + '\n';
+            }
+        }
+
+        return blockStyles || `
+.protyle-wysiwyg [data-node-id][custom-hide="true"]{
+    border: 2px dashed  rgba(92, 135, 138, 0.322);
+    background-color: rgba(92, 135, 138, 0.322);
+    background-image: -webkit-gradient(linear,
+    0 0, 100% 100%,
+    color-stop(.25, rgba(255, 255, 255, .2)),
+    color-stop(.25, transparent),
+    color-stop(.5, transparent),
+    color-stop(.5, rgba(255, 255, 255, .2)),
+    color-stop(.75, rgba(255, 255, 255, .2)),
+    color-stop(.75, transparent),
+    to(transparent));
+    background-size: 10px 10px;
+    border-radius: 0.5em;
+    transform: perspective(1000px);
+    transform-style: preserve-3d;
+    transform: rotateX(180deg); 
+}
+
+.protyle-wysiwyg [data-node-id][custom-hide="true"] *{
+    opacity: 0;
+}
+
+.protyle-wysiwyg [data-node-id][custom-hide="true"]:hover{
+    animation: rotateHide 0.7s ease forwards;
+}
+
+.protyle-wysiwyg [data-node-id][custom-hide="true"]:hover * {
+    opacity: 1;
+    transition: opacity 0.7s ease;
+}
+
+.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"]:hover{
+    animation: rotateHide 0.7s ease forwards;
+}
+
+.protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"]:hover * {
+    opacity: 1;
+    transition: opacity 0.7s ease;
+}
+
+@keyframes rotateHide {
+    0% {
+    }
+    100% {
+        transform: rotateX(0deg); 
+        color: var(--b3-theme-on-background);
+        border-color: var(--b3-theme-on-background);
+        background-color: transparent;
+        background-image: none;
+    }
+}
+        `;
     }
 
 
@@ -45,6 +192,13 @@ export default class MarkHide extends Plugin {
         this.styleElement = document.createElement('style');
         this.styleElement.id = 'snippetCSS-Markhide';
         document.head.appendChild(this.styleElement);
+
+        // Create block style element
+        this.blockStyleElement = document.createElement('style');
+        this.blockStyleElement.id = 'snippetCSS-BlockHide';
+        document.head.appendChild(this.blockStyleElement);
+        // 默认显示虚线描边样式
+        this.blockStyleElement.textContent = this.BLOCK_BORDER_ONLY_STYLES;
 
         this.settingUtils = new SettingUtils({
             plugin: this,
@@ -112,6 +266,87 @@ export default class MarkHide extends Plugin {
             hotkey: "",
             callback: () => this.toggleCloze(),
         });
+
+        // 添加块菜单
+        this.eventBus.on("click-blockicon", this.blockIconEventHandler.bind(this));
+    }
+
+    private async blockIconEventHandler({ detail }) {
+        const blockElements = detail.blockElements;
+        if (!blockElements || blockElements.length === 0) return;
+
+        // 检查所有选中块的挖空状态
+        let hiddenCount = 0;
+        let totalCount = blockElements.length;
+
+        for (const blockElement of blockElements) {
+            const isHidden = blockElement.getAttribute('custom-hide') === 'true';
+            if (isHidden) {
+                hiddenCount++;
+            }
+        }
+
+        // 根据状态决定菜单文本和操作
+        let menuLabel: string;
+        let shouldHide: boolean;
+
+        if (hiddenCount === 0) {
+            // 全部未挖空，显示"挖空"
+            menuLabel = this.i18n.blockCloze;
+            shouldHide = true;
+        } else if (hiddenCount === totalCount) {
+            // 全部已挖空，显示"取消挖空"
+            menuLabel = this.i18n.blockShow;
+            shouldHide = false;
+        } else {
+            // 部分挖空，显示"挖空"（统一设为挖空状态）
+            menuLabel = this.i18n.blockCloze;
+            shouldHide = true;
+        }
+
+        // 添加块挖空菜单项
+        detail.menu.addItem({
+            icon: "iconMarkHide",
+            label: menuLabel,
+            click: () => this.toggleMultipleBlocksCloze(blockElements, shouldHide)
+        });
+    }
+
+    private async toggleMultipleBlocksCloze(blockElements: Element[], shouldHide: boolean) {
+        try {
+            for (const blockElement of blockElements) {
+                const blockId = blockElement.getAttribute('data-node-id');
+                if (!blockId) continue;
+
+                if (shouldHide) {
+                    // 添加挖空
+                    await setBlockAttrs(blockId, { 'custom-hide': 'true' });
+                } else {
+                    // 取消挖空
+                    await setBlockAttrs(blockId, { 'custom-hide': '' });
+                }
+            }
+        } catch (error) {
+            console.error('Toggle multiple blocks cloze failed:', error);
+        }
+    }
+
+    private async toggleBlockCloze(blockId: string) {
+        try {
+            // 获取当前块的属性
+            const attrs = await getBlockAttrs(blockId);
+            const isHidden = attrs?.['custom-hide'] === 'true';
+
+            if (isHidden) {
+                // 如果已经挖空，则取消挖空
+                await setBlockAttrs(blockId, { 'custom-hide': '' });
+            } else {
+                // 如果没有挖空，则添加挖空
+                await setBlockAttrs(blockId, { 'custom-hide': 'true' });
+            }
+        } catch (error) {
+            console.error('Toggle block cloze failed:', error);
+        }
     }
     async toggleCloze() {
         await this.settingUtils.load();
@@ -126,14 +361,18 @@ export default class MarkHide extends Plugin {
             this.styleElement.textContent = '';
             this.topBarElement.setAttribute('aria-label', this.i18n.hide);
         }
+        // 更新块样式
+        this.updateBlockStyles();
     }
 
     onunload() {
-        // Clean up style element when plugin is unloaded
+        // Clean up style elements when plugin is unloaded
         this.styleElement?.remove();
+        this.blockStyleElement?.remove();
     }
     uninstall() {
-        // Clean up style element when plugin is uninstall
+        // Clean up style elements when plugin is uninstall
         this.styleElement?.remove();
+        this.blockStyleElement?.remove();
     }
 }
