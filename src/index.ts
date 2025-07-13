@@ -376,12 +376,12 @@ export default class MarkHide extends Plugin {
 
     private handleClozeClick(event: Event) {
         const target = event.target as HTMLElement;
-        
+
         // 如果点击的是隐藏按钮，不处理
         if (target.classList.contains('cloze-hide-btn')) {
             return;
         }
-        
+
         const clozeBlock = target.closest('[data-node-id][custom-hide="true"]') as HTMLElement;
 
         if (clozeBlock && this.isActive) {
@@ -389,7 +389,7 @@ export default class MarkHide extends Plugin {
             if (!clozeBlock.classList.contains('cloze-revealed')) {
                 event.preventDefault();
                 event.stopPropagation();
-                
+
                 clozeBlock.classList.add('cloze-revealed');
                 this.addHideButton(clozeBlock);
             }
@@ -401,19 +401,19 @@ export default class MarkHide extends Plugin {
         if (clozeBlock.querySelector('.cloze-hide-btn')) {
             return;
         }
-        
+
         const hideBtn = document.createElement('button');
         hideBtn.className = 'cloze-hide-btn';
         hideBtn.title = '隐藏挖空';
-        
+
         hideBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
+
             clozeBlock.classList.remove('cloze-revealed');
             hideBtn.remove();
         });
-        
+
         clozeBlock.appendChild(hideBtn);
     }
 
