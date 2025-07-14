@@ -42,6 +42,7 @@ export default class MarkHide extends Plugin {
     color-stop(.75, transparent),
     to(transparent));
     background-size: 10px 10px;
+    border: 2px dashed  rgba(92, 135, 138, 0.322) !important;
     border-radius: 0.5em;
     transform: perspective(1000px) rotateX(180deg);
     transform-style: preserve-3d;
@@ -72,6 +73,7 @@ export default class MarkHide extends Plugin {
     background-color: transparent;
     background-image: none;
     border-color: var(--b3-theme-on-background);
+    
 }
 
 .protyle-wysiwyg .protyle-wysiwyg__embed [data-node-id][custom-hide="true"].cloze-revealed * {
@@ -402,6 +404,14 @@ export default class MarkHide extends Plugin {
             return;
         }
 
+        // 查找或创建 protyle-attr 容器
+        let attrContainer = clozeBlock.querySelector('.protyle-attr') as HTMLElement;
+        if (!attrContainer) {
+            attrContainer = document.createElement('div');
+            attrContainer.className = 'protyle-attr';
+            clozeBlock.appendChild(attrContainer);
+        }
+
         const hideBtn = document.createElement('button');
         hideBtn.className = 'cloze-hide-btn';
         hideBtn.title = '隐藏挖空';
@@ -412,9 +422,14 @@ export default class MarkHide extends Plugin {
 
             clozeBlock.classList.remove('cloze-revealed');
             hideBtn.remove();
+
+            // 如果 protyle-attr 容器为空且是我们创建的，则移除它
+            if (attrContainer.children.length === 0 && !clozeBlock.querySelector('.protyle-attr:not(:empty)')) {
+                attrContainer.remove();
+            }
         });
 
-        clozeBlock.appendChild(hideBtn);
+        attrContainer.appendChild(hideBtn);
     }
 
     private async blockIconEventHandler({ detail }) {
@@ -489,12 +504,33 @@ export default class MarkHide extends Plugin {
             this.isActive = false;
             this.styleElement.textContent = '';
             this.topBarElement.setAttribute('aria-label', this.i18n.hide);
+
+            // 隐藏所有显示的挖空按钮
+            this.hideAllClozeButtons();
         }
         // 更新块样式
         this.updateBlockStyles();
 
         // 保存当前状态
         await this.saveClozeState();
+    }
+
+    private hideAllClozeButtons() {
+        // 移除所有已显示的挖空并清理按钮
+        const revealedBlocks = document.querySelectorAll('[data-node-id][custom-hide="true"].cloze-revealed');
+        revealedBlocks.forEach(block => {
+            block.classList.remove('cloze-revealed');
+            const hideBtn = block.querySelector('.cloze-hide-btn');
+            if (hideBtn) {
+                hideBtn.remove();
+
+                // 如果 protyle-attr 容器为空，则移除它
+                const attrContainer = block.querySelector('.protyle-attr');
+                if (attrContainer && attrContainer.children.length === 0) {
+                    attrContainer.remove();
+                }
+            }
+        });
     }
 
     onunload() {
