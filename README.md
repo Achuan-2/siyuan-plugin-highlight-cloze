@@ -6,16 +6,31 @@ While learning, we often encounter fill-in-the-blank questions and key points th
 
 ## ✨Features
 
-* ✨Click the plugin button at the top to toggle the visibility of highlighted text.
+### Highlight Cloze Function
+* **One-click toggle display mode**: Click the plugin button at the top to toggle the visibility of highlighted text.
 
   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/高亮挖空展示-2024-11-29.gif)
-* ✨In highlight cloze mode, hovering over the cloze text reveals the highlighted content.
+* **Hover preview**: In highlight cloze mode, hovering over the cloze text reveals the highlighted content.
   
   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/高亮挖空悬浮显示-2024-11-29.gif)
-* ✨When exporting to PDF in highlight cloze mode, the style is preserved, allowing you to print the document for review and testing.
+
+### Block Cloze Function
+Support for cloze processing of entire content blocks with the following operations:
+
+- **Cloze operation**: Set or cancel block cloze through the block menu
+- **Status toggle**: Click the top plugin button to uniformly toggle all cloze states
+- **Interactive display**: After cloze, click the block to show content, click the ❌ in the top right corner to hide again
+
+  ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2025-07-13_16-09-36-2025-07-13.png)
+
+### Exportable Cloze PDF
+
+* **PDF export with cloze style**: When cloze mode is enabled, exporting to PDF preserves the highlight cloze and block cloze styles, allowing you to print the document for review and testing.
 
   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_16-54-30-2024-11-29.png)
-* ✨Support setting shortcut keys, default is empty
+
+### Shortcut Key Support
+* **Custom shortcut keys**: Support setting personalized shortcut key combinations (default is empty)
 
   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_21-08-49-2024-11-29.png)
 
