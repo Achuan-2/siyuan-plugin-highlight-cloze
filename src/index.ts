@@ -10,7 +10,8 @@ export default class MarkHide extends Plugin {
     private styleElement: HTMLStyleElement;
     private blockStyleElement: HTMLStyleElement;
     private topBarElement;
-    private readonly HIDE_STYLES = `/* 高亮挖空的样式 */
+    private readonly HIDE_STYLES = `/* ------------------ 高亮挖空 ----------------------- */
+/* 高亮挖空的样式 */
 .b3-typography mark,
 .b3-typography span[data-type~=mark],
 .protyle-wysiwyg mark,
@@ -27,7 +28,7 @@ export default class MarkHide extends Plugin {
     transition: color 0.5s ease-in-out;
 }
 
-/* ------------------ 自定义属性 ----------------------- */
+/* ------------------ 挖空块 ----------------------- */
 
 .protyle-wysiwyg [data-node-id][custom-hide="true"]{
     border: 2px dashed  rgba(92, 135, 138, 0.322) !important;
@@ -298,7 +299,10 @@ export default class MarkHide extends Plugin {
                         await new Promise((resolve) => setTimeout(resolve, 200));
                         await this.settingUtils.set(key, value);
                     }
-
+                    
+                    // 重置后立即更新CSS
+                    const newCSS = this.settingUtils.get('css') || this.HIDE_STYLES;
+                    this.updateCSS(newCSS);
                 }
             }
         });
