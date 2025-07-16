@@ -7,10 +7,16 @@ While learning, we often encounter fill-in-the-blank questions and key points th
 ## ✨Features
 
 ### Highlight Cloze Function
-* **One-click toggle display mode**: Click the plugin button at the top to toggle the visibility of highlighted text.
+* **One-click toggle display mode**: 
+  After highlighting text
+
+  ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2025-07-16_10-40-30-2025-07-16.png)
+
+  Click the plugin button at the top to hide/show all highlighted text
 
   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/高亮挖空展示-2024-11-29.gif)
-* **Hover preview**: In highlight cloze mode, hovering over the cloze text reveals the highlighted content.
+
+* **Hover preview**: In highlight cloze mode, hovering over the cloze text temporarily reveals the content
   
   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/高亮挖空悬浮显示-2024-11-29.gif)
 
@@ -25,9 +31,9 @@ Support for cloze processing of entire content blocks with the following operati
 
 ### Exportable Cloze PDF
 
-* **PDF export with cloze style**: When cloze mode is enabled, exporting to PDF preserves the highlight cloze and block cloze styles, allowing you to print the document for review and testing.
+When cloze mode is enabled, exporting to PDF preserves the highlight cloze and block cloze styles, making it convenient to print review and test materials
 
-  ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_16-54-30-2024-11-29.png)
+![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_16-54-30-2024-11-29.png)
 
 ### Shortcut Key Support
 * **Custom shortcut keys**: Support setting personalized shortcut key combinations (default is empty)
@@ -36,17 +42,14 @@ Support for cloze processing of entire content blocks with the following operati
 
 ## 🎨Custom CSS
 
-Custom highlight cloze styles are supported.
+The plugin supports customizing the visual effects of highlight cloze through CSS:
 
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_15-44-28-2024-11-29.png)
 
-
-Example: 
-
-If you want the text with a hollow highlight style to have a black underline, you can modify the CSS in the settings as follows:
+Example: If you want the highlight cloze style to be a black underline, you can change the CSS in the settings to the following:
 
 ```css
-/* Style for text with  cloze */
+/* Style for highlight cloze */
 .b3-typography mark,
 .b3-typography span[data-type~=mark],
 .protyle-wysiwyg mark,
@@ -56,7 +59,7 @@ If you want the text with a hollow highlight style to have a black underline, yo
     background: none !important;
     border-bottom: 2px solid var(--b3-theme-on-background) !important;
 }
-/* Style for text when hovering over cloze */
+/* Style for text when hovering over highlight cloze */
 .b3-typography mark:hover,
 .b3-typography span[data-type~=mark]:hover,
 .protyle-wysiwyg mark:hover,
@@ -66,10 +69,10 @@ If you want the text with a hollow highlight style to have a black underline, yo
 }
 ```
 
-If you want the exported PDF to have the hollow style with a black underline, while keeping the original highlight style in the Siyuan application, you can set the style specifically for `#preview .protyle-wysiwyg span[data-type~='mark']`
+If you only want the exported PDF cloze style to be a black underline while keeping the original highlight style in SiYuan, you can set the style specifically for `#preview .protyle-wysiwyg span[data-type~='mark']`
 
 ```css
-/* Style for text with cloze*/
+/* Style for highlight cloze */
 .b3-typography mark,
 .b3-typography span[data-type~=mark],
 .protyle-wysiwyg mark,
@@ -78,7 +81,7 @@ If you want the exported PDF to have the hollow style with a black underline, wh
     transition: color 0.5s ease-in-out;
 }
 
-/* Style for text when hovering over cloze */
+/* Style for text when hovering over highlight cloze */
 .b3-typography mark:hover,
 .b3-typography span[data-type~=mark]:hover,
 .protyle-wysiwyg mark:hover,
@@ -87,17 +90,19 @@ If you want the exported PDF to have the hollow style with a black underline, wh
     transition: color 0.5s ease-in-out;
 }
 
-/* Style for cloze in exported PDF */
+/* Style for highlight cloze in exported PDF */
 #preview .protyle-wysiwyg span[data-type~='mark'] {
     color: transparent !important;
     border-bottom: 2px solid var(--b3-theme-on-background);
 }
 ```
 
+## ❤️Support Development
 
+If this plugin is helpful to you, please consider supporting it in the following ways:
+- Star the GitHub repository ⭐
+- Sponsor to support continued development
 
-## ❤️Powered by Love
-
-If you like my plugin, please consider starring the GitHub repository and donating if possible. This will motivate me to continue improving this plugin and developing new ones.
+This will motivate me to continue improving this plugin and develop more useful tools.
 
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/20241128221208-2024-11-28.png)
