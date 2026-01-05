@@ -10,8 +10,6 @@
 * **一键切换显示模式**：
   对文本进行高亮之后
 
-  ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2025-07-16_10-40-30-2025-07-16.png)
-
   点击顶部插件按钮，即可隐藏/显示所有高亮文字
   
   ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/高亮挖空展示-2024-11-29.gif)
