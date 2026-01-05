@@ -10,7 +10,6 @@ While learning, we often encounter fill-in-the-blank questions and key points th
 * **One-click toggle display mode**: 
   After highlighting text
 
-  ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2025-07-16_10-40-30-2025-07-16.png)
 
   Click the plugin button at the top to hide/show all highlighted text
 
