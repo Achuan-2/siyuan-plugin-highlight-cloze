@@ -96,12 +96,8 @@ If you only want the exported PDF cloze style to be a black underline while keep
 }
 ```
 
-## ❤️Support Development
+## ❤️ Tips Are Welcome
 
-If this plugin is helpful to you, please consider supporting it in the following ways:
-- Star the GitHub repository ⭐
-- Sponsor to support continued development
+If you find this plugin useful, you're welcome to leave a tip or give the repository a star on GitHub. Your support helps me maintain and improve this plugin and develop new ones. Thank you for your support!
 
-This will motivate me to continue improving this plugin and develop more useful tools.
-
-![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/20241128221208-2024-11-28.png)
+[Leave a tip](https://pancake.waffo.ai/store/achuan-2-fdbho4ye/product/PROD_3F7Aa7c2NQlz9KmxcgxjQ7?type=onetime&currency=USD)
