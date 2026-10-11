@@ -5,9 +5,44 @@
     "blockCloze": "块挖空",
     "blockShow": "取消块挖空",
     "settings": {
+        "clozeStyle": {
+            "title": "挖空方式",
+            "description": "选择高亮、下划线或括号；悬浮显示答案。修改设置即时预览，保存后保留，未保存关闭则恢复原设置。",
+            "options": { "highlight": "高亮", "underline": "下划线", "brackets": "括号", "custom": "自定义 CSS" }
+        },
+        "clozeColor": {
+            "title": "挖空颜色",
+            "description": "文字颜色固定使用 --b3-theme-on-background，高亮颜色固定使用 --b3-protyle-inline-mark-background。选择变量颜色可填写 CSS 变量名或 var(...)；选择自定义颜色可使用颜色选择器。默认使用文字颜色。",
+            "textColor": "文字颜色",
+            "variableColor": "变量颜色",
+            "themeHighlightColor": "高亮颜色",
+            "customColor": "自定义颜色"
+        },
+        "bracketStyle": {
+            "title": "括号样式",
+            "description": "在括号挖空方式下生效，空白宽度随原文字长度保留。",
+            "options": { "()": "( )", "[]": "[ ]", "【】": "【 】", "（）": "（ ）", "{}": "{ }", "〈〉": "〈 〉", "custom": "自定义左右符号" }
+        },
+        "customLeftBracket": {
+            "title": "自定义左符号",
+            "description": "括号样式选择“自定义左右符号”时生效，可填写多个字符。"
+        },
+        "customRightBracket": {
+            "title": "自定义右符号",
+            "description": "括号样式选择“自定义左右符号”时生效，可填写多个字符。"
+        },
+        "pdfStyle": {
+            "title": "PDF 导出样式",
+            "description": "跟随开关：开启时挖空，关闭时显示；保留高亮或正常文字：始终显示答案，并取消块挖空。导出预览已打开时需关闭后重新导出。",
+            "options": { "follow": "跟随挖空开关", "highlight": "保留高亮样式", "normal": "高亮变为正常文字" }
+        },
         "css": {
             "title": "自定义样式",
-            "description": "自定义高亮隐藏的CSS样式，样式最好添加!important，避免样式没有生效</br>只在默认主题和Tsundoku主题测试，其他主题如果样式不生效/显示有问题，需要自行修改"
+            "description": "高级自定义：选择“自定义 CSS”挖空方式后，此处控制高亮挖空；其他方式由预设控制。块挖空仍可在此调整，建议添加 !important。PDF 导出策略优先于高亮隐藏样式。"
+        },
+        "pdfClearHighlight": {
+            "title": "不挖空时清除高亮样式",
+            "description": "仅在 PDF 跟随挖空开关且挖空关闭时生效。默认关闭，保留高亮；开启后将高亮文字导出为正常文字。"
         },
         "reset": {
             "title": "重置设置",

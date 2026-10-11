@@ -30,7 +30,9 @@ Support for cloze processing of entire content blocks with the following operati
 
 ### Exportable Cloze PDF
 
-When cloze mode is enabled, exporting to PDF preserves the highlight cloze and block cloze styles, making it convenient to print review and test materials
+PDF export has three policies: **Follow cloze toggle** (default) hides answers when enabled and shows them when disabled; **Keep highlights** always shows answers with theme highlights; **Convert highlights to normal text** always shows answers without highlights. The last two policies also reveal hidden blocks in the PDF and leave the editor state unchanged. Close and reopen an existing PDF export preview after changing settings or toggling cloze mode.
+
+Selecting **Follow cloze toggle** shows **Clear highlights when cloze is off**, disabled by default. Enable it to export highlighted text as normal text when cloze is off. Cloze styles still apply when cloze is on.
 
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_16-54-30-2024-11-29.png)
 
@@ -41,7 +43,9 @@ When cloze mode is enabled, exporting to PDF preserves the highlight cloze and b
 
 ## 🎨Custom CSS
 
-The plugin supports customizing the visual effects of highlight cloze through CSS:
+Choose **Highlight**, **Underline**, or **Brackets** directly in settings. Highlight cloze backgrounds, underlines and brackets use **Cloze color**, defaulting to the theme text color, `var(--b3-theme-on-background)`. You can also select a custom color. Brackets include `()`, `[]`, `【】`, `（）`, `{}`, and `〈〉`, plus custom left/right symbols. Blanks retain the original text width and reveal answers on hover. Changes preview immediately. Save to keep them; closing or cancelling without saving restores the previous settings and styles.
+
+Choose **Custom CSS** to customize highlight clozes through CSS. Existing users with modified CSS automatically retain this mode. Block cloze styles remain controlled by CSS.
 
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/PixPin_2024-11-29_15-44-28-2024-11-29.png)
 

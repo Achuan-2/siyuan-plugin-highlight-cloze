@@ -5,9 +5,44 @@
     "blockCloze": "Block Cloze",
     "blockShow": "Cancel Block Cloze",
     "settings": {
+        "clozeStyle": {
+            "title": "Cloze style",
+            "description": "Choose highlights, underlines or brackets. Hover to reveal answers. Changes preview immediately; save to keep them, or close without saving to restore the previous settings.",
+            "options": { "highlight": "Highlight", "underline": "Underline", "brackets": "Brackets", "custom": "Custom CSS" }
+        },
+        "clozeColor": {
+            "title": "Cloze color",
+            "description": "Text color uses --b3-theme-on-background; highlight color uses --b3-protyle-inline-mark-background. Both are fixed. Variable color accepts a CSS variable name or var(...); custom color uses a color picker. Defaults to text color.",
+            "textColor": "Text color",
+            "variableColor": "Variable color",
+            "themeHighlightColor": "Highlight color",
+            "customColor": "Custom color"
+        },
+        "bracketStyle": {
+            "title": "Bracket style",
+            "description": "Applies to bracket clozes. Blank width follows the original text length.",
+            "options": { "()": "( )", "[]": "[ ]", "【】": "【 】", "（）": "（ ）", "{}": "{ }", "〈〉": "〈 〉", "custom": "Custom left/right symbols" }
+        },
+        "customLeftBracket": {
+            "title": "Custom left symbol",
+            "description": "Used with custom brackets. Multiple characters are allowed."
+        },
+        "customRightBracket": {
+            "title": "Custom right symbol",
+            "description": "Used with custom brackets. Multiple characters are allowed."
+        },
+        "pdfStyle": {
+            "title": "PDF export style",
+            "description": "Follow toggle: hide when enabled, show when disabled. Highlight or normal text: always show answers and reveal hidden blocks. Close any existing export preview and export again after changing settings.",
+            "options": { "follow": "Follow cloze toggle", "highlight": "Keep highlights", "normal": "Convert highlights to normal text" }
+        },
+        "pdfClearHighlight": {
+            "title": "Clear highlights when cloze is off",
+            "description": "Applies only when PDF export follows the cloze toggle and cloze is off. Disabled by default to keep highlights. Enable to export highlighted text as normal text."
+        },
         "css": {
             "title": "Custom Style",
-            "description": "Customize the CSS style for Highlight Cloze"
+            "description": "Advanced styling: choose Custom CSS to control highlight clozes here. Presets control other cloze styles. Block cloze styles remain customizable. Use !important where needed. The PDF policy overrides highlight hiding."
         },
         "reset": {
             "title": "Reset Settings",

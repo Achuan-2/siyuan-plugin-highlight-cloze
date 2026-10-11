@@ -82,16 +82,20 @@ export class SettingUtils {
 
     settings: Map<string, ISettingUtilsItem> = new Map();
     elements: Map<string, HTMLElement> = new Map();
+    private previewCallback?: (data: Object) => void;
 
     constructor(args: {
         plugin: Plugin,
         name?: string,
         callback?: (data: any) => void,
+        previewCallback?: (data: Object) => void,
+        closeCallback?: () => void,
         width?: string,
         height?: string
     }) {
         this.name = args.name ?? 'settings';
         this.plugin = args.plugin;
+        this.previewCallback = args.previewCallback;
         this.file = this.name.endsWith('.json') ? this.name : `${this.name}.json`;
         this.plugin.setting = new Setting({
             width: args.width,
@@ -112,6 +116,7 @@ export class SettingUtils {
                 for (let key of this.settings.keys()) {
                     this.updateElementFromValue(key);
                 }
+                args.closeCallback?.();
             }
         });
     }
@@ -239,6 +244,25 @@ export class SettingUtils {
         return data;
     }
 
+    /** 读取表单草稿用于预览，不修改已保存的设置。 */
+    preview() {
+        if (!this.previewCallback) return;
+        const data: Record<string, any> = {};
+        for (const [key, item] of this.settings) {
+            if (item.type === 'button') continue;
+            const element = this.elements.get(key);
+            data[key] = element ? item.getEleVal(element) : item.value;
+        }
+        this.previewCallback(data);
+    }
+
+    private bindPreview(element: HTMLElement) {
+        if (!this.previewCallback) return;
+        // 复合控件的输入事件会冒泡，颜色选择、输入框及下拉框统一支持即时预览。
+        element.addEventListener('input', () => this.preview());
+        element.addEventListener('change', () => this.preview());
+    }
+
     addItem(item: ISettingUtilsItem) {
         this.settings.set(item.key, item);
         const IsCustom = item.type === 'custom';
@@ -257,6 +281,7 @@ export class SettingUtils {
 
         if (item.createElement === undefined) {
             let itemElement = this.createDefaultElement(item);
+            this.bindPreview(itemElement);
             this.elements.set(item.key, itemElement);
             this.plugin.setting.addItem({
                 title: item.title,
@@ -276,6 +301,7 @@ export class SettingUtils {
                 createActionElement: () => {
                     let val = this.get(item.key);
                     let element = item.createElement(val);
+                    this.bindPreview(element);
                     this.elements.set(item.key, element);
                     return element;
                 }

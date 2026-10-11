@@ -1,15 +1,30 @@
-import { Plugin, IModel } from "siyuan";
-import { setBlockAttrs, getBlockAttrs } from './api'
+import { Plugin } from "siyuan";
+import { setBlockAttrs } from './api'
 import { SettingUtils } from "./libs/setting-utils";
+import { buildClozeCSS, buildPDFCSS, CLOZE_DEFAULTS, ClozeSettings, getClozeColor, THEME_HIGHLIGHT_COLOR } from './cloze-styles';
 
 const STORAGE_NAME = "config";
 const STATE_FILE = "cloze-state.json";
+type SettingLabels = Record<keyof ClozeSettings | 'reset', {
+    title: string;
+    description: string;
+    textColor?: string;
+    variableColor?: string;
+    themeHighlightColor?: string;
+    customColor?: string;
+    options?: Record<string, string>;
+    label?: string;
+}>;
 export default class MarkHide extends Plugin {
     private isActive: boolean = false;
     private settingUtils: SettingUtils;
+    private previewSettings: ClozeSettings | null = null;
     private styleElement: HTMLStyleElement;
     private blockStyleElement: HTMLStyleElement;
+    private pdfStyleElement: HTMLStyleElement;
     private topBarElement;
+    private readonly onClozeClick = this.handleClozeClick.bind(this);
+    private readonly onBlockIcon = this.blockIconEventHandler.bind(this);
     private readonly HIDE_STYLES = `/* ------------------ 高亮挖空 ----------------------- */
 /* 高亮挖空的样式 */
 .b3-typography mark,
@@ -123,22 +138,55 @@ export default class MarkHide extends Plugin {
     private getDefaultSettings() {
         return {
             css: this.HIDE_STYLES,
+            ...CLOZE_DEFAULTS,
         };
     }
 
-    customTab: () => IModel;
-
-    updateCSS(css: string) {
-        if (this.isActive) {
-            this.styleElement.textContent = css;
-        }
-        this.updateBlockStyles();
+    private refreshStyles() {
+        const settings = this.previewSettings ?? this.settingUtils.dump() as ClozeSettings;
+        this.styleElement.textContent = this.isActive
+            ? `${settings.css}\n${buildClozeCSS(settings)}` : '';
+        this.updateBlockStyles(settings.css);
+        this.pdfStyleElement.textContent = buildPDFCSS(settings, this.isActive);
     }
 
-    private updateBlockStyles() {
+    private updatePDFOptionsVisibility() {
+        const followsToggle = (this.settingUtils.take('pdfStyle') ?? this.settingUtils.get('pdfStyle')) === 'follow';
+        const input = this.settingUtils.getElement('pdfClearHighlight') as HTMLInputElement;
+        input?.closest('.b3-label')?.classList.toggle('fn__none', !followsToggle);
+    }
+
+    private setClozeColorControl(element: HTMLElement, value: string) {
+        if (!element) return;
+        const color = getClozeColor(value);
+        const select = element.querySelector('select');
+        const input = element.querySelector<HTMLInputElement>('input[type="color"]');
+        const variableInput = element.querySelector<HTMLInputElement>('input[type="text"]');
+        const useVariableColor = color.startsWith('var(');
+        select.value = color === CLOZE_DEFAULTS.clozeColor ? 'themeText'
+            : color === THEME_HIGHLIGHT_COLOR ? 'themeHighlight'
+            : useVariableColor ? 'variable' : 'custom';
+        input.value = useVariableColor ? '#000000' : color;
+        variableInput.value = (useVariableColor ? color : CLOZE_DEFAULTS.clozeColor).slice(4, -1);
+        input.classList.toggle('fn__none', useVariableColor);
+        variableInput.classList.toggle('fn__none', select.value !== 'variable');
+    }
+
+    private updateClozeOptionsVisibility() {
+        const clozeStyle = this.settingUtils.take('clozeStyle') ?? this.settingUtils.get('clozeStyle');
+        const bracketStyle = this.settingUtils.take('bracketStyle') ?? this.settingUtils.get('bracketStyle');
+        const showCustomSymbols = clozeStyle === 'brackets' && bracketStyle === 'custom';
+        this.settingUtils.getElement('bracketStyle')?.closest('.b3-label')?.classList.toggle('fn__none', clozeStyle !== 'brackets');
+        this.settingUtils.getElement('css')?.closest('.b3-label')?.classList.toggle('fn__none', clozeStyle !== 'custom');
+        for (const key of ['customLeftBracket', 'customRightBracket']) {
+            this.settingUtils.getElement(key)?.closest('.b3-label')?.classList.toggle('fn__none', !showCustomSymbols);
+        }
+    }
+
+    private updateBlockStyles(css = this.settingUtils.get('css')) {
         if (this.isActive) {
             // 如果激活状态，使用完整的块挖空样式（从CSS中提取块相关部分）
-            const blockStyles = this.extractBlockStyles(this.settingUtils.get('css') || this.HIDE_STYLES);
+            const blockStyles = this.extractBlockStyles(css || this.HIDE_STYLES);
             this.blockStyleElement.textContent = blockStyles;
         } else {
             // 如果未激活，只显示虚线描边
@@ -259,54 +307,172 @@ export default class MarkHide extends Plugin {
         // 默认显示虚线描边样式
         this.blockStyleElement.textContent = this.BLOCK_BORDER_ONLY_STYLES;
 
+        this.pdfStyleElement = document.createElement('style');
+        this.pdfStyleElement.id = 'snippetCSS-ClozePDF';
+        document.head.appendChild(this.pdfStyleElement);
+
         // 初始化设置
         this.settingUtils = new SettingUtils({
             plugin: this,
             name: STORAGE_NAME,
+            callback: () => {
+                this.previewSettings = null;
+                this.refreshStyles();
+            },
+            previewCallback: data => {
+                this.previewSettings = data as ClozeSettings;
+                this.refreshStyles();
+            },
+            closeCallback: () => {
+                // 关闭时表单已恢复；保存后的值已提交，取消时则恢复原来的样式。
+                this.previewSettings = null;
+                this.refreshStyles();
+                this.updateClozeOptionsVisibility();
+                this.updatePDFOptionsVisibility();
+            },
+        });
+        const settings = this.i18n.settings as unknown as SettingLabels;
+        this.settingUtils.addItem({
+            key: 'clozeStyle', value: CLOZE_DEFAULTS.clozeStyle, type: 'select',
+            title: settings.clozeStyle.title, description: settings.clozeStyle.description,
+            // 显式排列，避免宿主加载翻译后按键名重排选项。
+            options: {
+                highlight: settings.clozeStyle.options.highlight,
+                underline: settings.clozeStyle.options.underline,
+                brackets: settings.clozeStyle.options.brackets,
+                custom: settings.clozeStyle.options.custom,
+            },
+            action: { callback: () => this.updateClozeOptionsVisibility() },
         });
         this.settingUtils.addItem({
-            key: "css",
-            value: this.HIDE_STYLES,
-            type: "textarea",
-            title: this.i18n.settings.css.title,
-            description: this.i18n.settings.css.description,
-            action: {
-                callback: () => {
-                    const newCSS = this.settingUtils.take('css');
-                    if (newCSS) {
-                        this.updateCSS(newCSS);
-                    }
-                }
-            }
+            key: 'clozeColor', value: CLOZE_DEFAULTS.clozeColor, type: 'custom',
+            title: settings.clozeColor.title, description: settings.clozeColor.description,
+            createElement: value => {
+                const container = document.createElement('div');
+                container.className = 'fn__flex fn__flex-center';
+                container.style.flexWrap = 'wrap';
+                container.style.gap = '8px';
+                const select = document.createElement('select');
+                select.className = 'b3-select';
+                select.setAttribute('aria-label', settings.clozeColor.title);
+                select.add(new Option(settings.clozeColor.textColor, 'themeText'));
+                select.add(new Option(settings.clozeColor.themeHighlightColor, 'themeHighlight'));
+                select.add(new Option(settings.clozeColor.variableColor, 'variable'));
+                select.add(new Option(settings.clozeColor.customColor, 'custom'));
+                const variableInput = this.settingUtils.createDefaultElement({
+                    key: 'clozeColor', value: '', type: 'textinput',
+                    title: settings.clozeColor.title, description: settings.clozeColor.description,
+                }) as HTMLInputElement;
+                variableInput.type = 'text';
+                variableInput.placeholder = '--b3-theme-on-background';
+                variableInput.setAttribute('aria-label', settings.clozeColor.variableColor);
+                const input = document.createElement('input');
+                input.type = 'color';
+                input.className = 'b3-text-field fn__flex-center';
+                input.setAttribute('aria-label', settings.clozeColor.title);
+                select.onchange = () => {
+                    const useVariableColor = select.value === 'variable';
+                    input.classList.toggle('fn__none', select.value !== 'custom');
+                    variableInput.classList.toggle('fn__none', !useVariableColor);
+                };
+                container.append(select, variableInput, input);
+                this.setClozeColorControl(container, value);
+                return container;
+            },
+            getEleVal: element => {
+                const mode = element.querySelector('select').value;
+                if (mode === 'themeText') return CLOZE_DEFAULTS.clozeColor;
+                if (mode === 'themeHighlight') return THEME_HIGHLIGHT_COLOR;
+                return getClozeColor(mode === 'variable'
+                    ? element.querySelector<HTMLInputElement>('input[type="text"]').value
+                    : element.querySelector<HTMLInputElement>('input[type="color"]').value);
+            },
+            setEleVal: (element, value) => this.setClozeColorControl(element, value),
         });
-
+        this.settingUtils.addItem({
+            key: 'bracketStyle', value: CLOZE_DEFAULTS.bracketStyle, type: 'select',
+            title: settings.bracketStyle.title, description: settings.bracketStyle.description,
+            options: settings.bracketStyle.options,
+            action: { callback: () => this.updateClozeOptionsVisibility() },
+        });
+        this.settingUtils.addItem({
+            key: 'pdfStyle', value: CLOZE_DEFAULTS.pdfStyle, type: 'select',
+            title: settings.pdfStyle.title, description: settings.pdfStyle.description,
+            options: settings.pdfStyle.options,
+            action: { callback: () => this.updatePDFOptionsVisibility() },
+        });
+        this.settingUtils.addItem({
+            key: 'pdfClearHighlight', value: CLOZE_DEFAULTS.pdfClearHighlight, type: 'custom',
+            title: settings.pdfClearHighlight.title, description: settings.pdfClearHighlight.description,
+            createElement: value => {
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.checked = value;
+                input.className = 'b3-switch fn__flex-center';
+                input.setAttribute('aria-label', settings.pdfClearHighlight.title);
+                // 思源插入设置行后再更新可见性，兼容首次打开和重新打开设置。
+                queueMicrotask(() => this.updatePDFOptionsVisibility());
+                return input;
+            },
+            getEleVal: element => (element as HTMLInputElement).checked,
+            setEleVal: (element, value) => {
+                if (element) (element as HTMLInputElement).checked = value;
+            },
+        });
         // Reset Settings Button
         this.settingUtils.addItem({
             key: "resetConfig",
             value: "",
             type: "button",
-            title: this.i18n.settings.reset?.title || "Reset Settings",
-            description: this.i18n.settings.reset?.description || "Reset all settings to default values",
+            title: settings.reset.title,
+            description: settings.reset.description,
             button: {
-                label: this.i18n.settings.reset?.label || "Reset",
-                callback: async () => {
-                    // if (confirm(this.i18n.settings.reset.confirm)) {
+                label: settings.reset.label,
+                callback: () => {
                     const defaultSettings = this.getDefaultSettings();
-                    // Update each setting item's value and UI element  只是UI改了，json的值没有改，所以不点击保存可以反悔
+                    // 重置表单并预览；只有保存才提交，取消时恢复原配置。
                     for (const [key, value] of Object.entries(defaultSettings)) {
-                        await this.settingUtils.set(key, '');
-                        // 等0.2秒，有一个刷新效果
-                        await new Promise((resolve) => setTimeout(resolve, 200));
-                        await this.settingUtils.set(key, value);
+                        const item = this.settingUtils.settings.get(key);
+                        item.setEleVal(this.settingUtils.getElement(key), value);
                     }
-                    
-                    // 重置后立即更新CSS
-                    const newCSS = this.settingUtils.get('css') || this.HIDE_STYLES;
-                    this.updateCSS(newCSS);
+                    this.updatePDFOptionsVisibility();
+                    this.updateClozeOptionsVisibility();
+                    this.settingUtils.preview();
                 }
             }
         });
 
+
+        // 自定义左右符号仅在选择自定义括号时显示。
+        for (const key of ['customLeftBracket', 'customRightBracket'] as const) {
+            const item: ISettingUtilsItem = {
+                key, value: CLOZE_DEFAULTS[key], type: 'textinput',
+                title: settings[key].title, description: settings[key].description,
+            };
+            this.settingUtils.addItem({
+                ...item,
+                createElement: value => {
+                    const input = this.settingUtils.createDefaultElement({ ...item, value });
+                    // 等设置行插入后再隐藏，重新打开时也按当前选择更新。
+                    queueMicrotask(() => this.updateClozeOptionsVisibility());
+                    return input;
+                },
+            });
+        }
+
+        // CSS 编辑框放在所有设置项之后，仅在选择自定义 CSS 方式时显示。
+        const cssItem: ISettingUtilsItem = {
+            key: 'css', value: this.HIDE_STYLES, type: 'textarea',
+            title: settings.css.title, description: settings.css.description,
+        };
+        this.settingUtils.addItem({
+            ...cssItem,
+            createElement: value => {
+                const textarea = this.settingUtils.createDefaultElement({ ...cssItem, value });
+                queueMicrotask(() => this.updateClozeOptionsVisibility());
+                return textarea;
+            },
+        });
 
         // 添加icon
         this.addIcons(`<symbol id="iconMarkHide"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
@@ -322,8 +488,15 @@ export default class MarkHide extends Plugin {
             callback: () => this.toggleCloze()
         });
 
-        // 加载保存的状态
+        // 无论挖空开关是否打开，都加载样式及 PDF 策略。
+        const savedSettings = await this.settingUtils.load();
+        if (savedSettings && savedSettings.clozeStyle === undefined &&
+            typeof savedSettings.css === 'string' && savedSettings.css !== this.HIDE_STYLES) {
+            // 旧用户编辑过 CSS 时继续使用其高亮样式，避免预设覆盖。
+            this.settingUtils.set('clozeStyle', 'custom');
+        }
         await this.loadClozeState();
+        this.refreshStyles();
 
         // 注册快捷键
         this.addCommand({
@@ -334,7 +507,7 @@ export default class MarkHide extends Plugin {
         });
 
         // 添加块菜单
-        this.eventBus.on("click-blockicon", this.blockIconEventHandler.bind(this));
+        this.eventBus.on("click-blockicon", this.onBlockIcon);
 
         // 添加点击事件监听器
         this.addClickListener();
@@ -347,19 +520,13 @@ export default class MarkHide extends Plugin {
 
                 // 根据加载的状态初始化UI和样式
                 if (this.isActive) {
-                    // 确保settingUtils已加载
-                    await this.settingUtils.load();
                     this.topBarElement.style.backgroundColor = "var(--b3-toolbar-hover)";
-                    this.styleElement.textContent = this.settingUtils.get('css') || this.HIDE_STYLES;
                     this.topBarElement.setAttribute('aria-label', this.i18n.show);
                 } else {
                     this.topBarElement.style.backgroundColor = 'transparent';
-                    this.styleElement.textContent = '';
                     this.topBarElement.setAttribute('aria-label', this.i18n.hide);
                 }
 
-                // 更新块样式
-                this.updateBlockStyles();
             }
         } catch (error) {
             console.log('Failed to load cloze state:', error);
@@ -377,7 +544,7 @@ export default class MarkHide extends Plugin {
         }
     }
     private addClickListener() {
-        document.addEventListener('click', this.handleClozeClick.bind(this));
+        document.addEventListener('click', this.onClozeClick);
     }
 
     private handleClozeClick(event: Event) {
@@ -497,23 +664,19 @@ export default class MarkHide extends Plugin {
     }
 
     async toggleCloze() {
-        await this.settingUtils.load();
         if (!this.isActive) {
             this.topBarElement.style.backgroundColor = "var(--b3-toolbar-hover)";
             this.isActive = true;
-            this.styleElement.textContent = this.settingUtils.get('css');
             this.topBarElement.setAttribute('aria-label', this.i18n.show);
         } else {
             this.topBarElement.style.backgroundColor = 'transparent';
             this.isActive = false;
-            this.styleElement.textContent = '';
             this.topBarElement.setAttribute('aria-label', this.i18n.hide);
 
             // 隐藏所有显示的挖空按钮
             this.hideAllClozeButtons();
         }
-        // 更新块样式
-        this.updateBlockStyles();
+        this.refreshStyles();
 
         // 保存当前状态
         await this.saveClozeState();
@@ -541,15 +704,13 @@ export default class MarkHide extends Plugin {
         // Clean up style elements when plugin is unloaded
         this.styleElement?.remove();
         this.blockStyleElement?.remove();
+        this.pdfStyleElement?.remove();
         // 移除点击事件监听器
-        document.removeEventListener('click', this.handleClozeClick.bind(this));
+        document.removeEventListener('click', this.onClozeClick);
+        this.eventBus.off('click-blockicon', this.onBlockIcon);
     }
 
     uninstall() {
-        // Clean up style elements when plugin is uninstall
-        this.styleElement?.remove();
-        this.blockStyleElement?.remove();
-        // 移除点击事件监听器
-        document.removeEventListener('click', this.handleClozeClick.bind(this));
+        this.onunload();
     }
 }

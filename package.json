@@ -10,6 +10,8 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development VITE_SOURCEMAP=inline vite build --watch",
     "build": "cross-env NODE_ENV=production vite build",
+    "test:styles": "node --test scripts/cloze-styles.test.mjs",
+    "test:settings": "node --test scripts/setting-preview.test.mjs",
     "make-link": "node --no-warnings ./scripts/make_dev_link.js",
     "make-link-win": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/elevate.ps1 -scriptPath ./scripts/make_dev_link.js",
     "update-version": "node --no-warnings ./scripts/update_version.js",
