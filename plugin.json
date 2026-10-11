@@ -2,7 +2,7 @@
   "name": "siyuan-plugin-highlight-cloze",
   "author": "Achuan-2",
   "url": "https://github.com/Achuan-2/siyuan-plugin-highlight-cloze",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "minAppVersion": "3.0.12",
   "backends": [
     "all"
