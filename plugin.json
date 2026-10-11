@@ -5,22 +5,13 @@
   "version": "0.1.2",
   "minAppVersion": "3.0.12",
   "backends": [
-    "windows",
-    "linux",
-    "darwin",
-    "docker",
-    "ios",
-    "android"
+    "all"
   ],
   "frontends": [
-    "desktop",
-    "mobile",
-    "browser-desktop",
-    "browser-mobile",
-    "desktop-window"
+    "all"
   ],
   "displayName": {
-    "default": "Cloze Review",
+    "default": " Highlight Cloze",
     "zh_CN": "挖空复习"
   },
   "description": {

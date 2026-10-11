@@ -392,7 +392,11 @@ export default class MarkHide extends Plugin {
         this.settingUtils.addItem({
             key: 'bracketStyle', value: CLOZE_DEFAULTS.bracketStyle, type: 'select',
             title: settings.bracketStyle.title, description: settings.bracketStyle.description,
-            options: settings.bracketStyle.options,
+            // 宿主可能重排翻译键，显式将自定义符号放在所有预设括号之后。
+            options: Object.fromEntries([
+                ...Object.entries(settings.bracketStyle.options).filter(([key]) => key !== 'custom'),
+                ['custom', settings.bracketStyle.options.custom],
+            ]),
             action: { callback: () => this.updateClozeOptionsVisibility() },
         });
         this.settingUtils.addItem({
